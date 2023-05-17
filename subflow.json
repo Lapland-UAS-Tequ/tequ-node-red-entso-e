@@ -1,0 +1,310 @@
+{
+    "id": "dbcfc232eebbdb2d",
+    "type": "subflow",
+    "name": "ENTSO-E",
+    "info": "Queries electricity spot prices from ENTSO-E Transparency Platform.\r\n\r\n### Inputs\r\n\r\n`msg.payload` is used to override parameters configured in Node dialog.\r\n\r\n: payload (object) :  JSON object containing one or more query parameters.\r\n\r\nPossible parameters in `msg.payload`\r\n\r\n: securityToken (string) : API key\r\n\r\n: documentType (string) : Document type, Default is `A44`\r\n\r\n: in_Domain (string) : In Domain, Default is `10YFI-1--------U`\r\n\r\n: out_Domain (string) : Out Domain, Default is `10YFI-1--------U`\r\n\r\n: periodStart (string) : Query period start time `202305162100`\r\n\r\n: periodEnd (string) : Query period end time `202305172100`\r\n\r\n\r\n### Outputs\r\n\r\n: payload (array) : Spot prices. Array of JSON objects.\r\n\r\nValues in JSON object\r\n\r\n: ts (string) : Timestamp UTC.\r\n\r\n: price (number) : Spot price for timestamp.\r\n\r\n### Details\r\n\r\nFor more information about possible parameter values, please look:\r\n\r\n[ENTSO-E API docs](https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide.html)",
+    "category": "Tequ-API Client",
+    "in": [
+        {
+            "x": 140,
+            "y": 180,
+            "wires": [
+                {
+                    "id": "c88a5a760cfee8cf"
+                }
+            ]
+        }
+    ],
+    "out": [
+        {
+            "x": 1030,
+            "y": 200,
+            "wires": [
+                {
+                    "id": "9c0d57d9d60e4ece",
+                    "port": 0
+                },
+                {
+                    "id": "64c05bd6b0ec4050",
+                    "port": 1
+                }
+            ]
+        }
+    ],
+    "env": [
+        {
+            "name": "securityToken",
+            "type": "cred",
+            "ui": {
+                "icon": "font-awesome/fa-lock",
+                "label": {
+                    "en-US": "API key"
+                },
+                "type": "input",
+                "opts": {
+                    "types": [
+                        "env",
+                        "cred"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "documentType",
+            "type": "str",
+            "value": "A44",
+            "ui": {
+                "label": {
+                    "en-US": "Document Type"
+                },
+                "type": "input",
+                "opts": {
+                    "types": [
+                        "str",
+                        "env"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "in_Domain",
+            "type": "str",
+            "value": "10YFI-1--------U",
+            "ui": {
+                "label": {
+                    "en-US": "In Domain"
+                },
+                "type": "input",
+                "opts": {
+                    "types": [
+                        "str",
+                        "env"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "out_Domain",
+            "type": "str",
+            "value": "10YFI-1--------U",
+            "ui": {
+                "label": {
+                    "en-US": "Out Domain"
+                },
+                "type": "input",
+                "opts": {
+                    "types": [
+                        "str",
+                        "env"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "periodStart",
+            "type": "str",
+            "value": "202305162100",
+            "ui": {
+                "label": {
+                    "en-US": "Time period start"
+                },
+                "type": "input",
+                "opts": {
+                    "types": [
+                        "str",
+                        "env"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "periodEnd",
+            "type": "str",
+            "value": "202305172100",
+            "ui": {
+                "label": {
+                    "en-US": "Time period end"
+                },
+                "type": "input",
+                "opts": {
+                    "types": [
+                        "str",
+                        "env"
+                    ]
+                }
+            }
+        }
+    ],
+    "meta": {
+        "module": "tequ-node-red-entso-e",
+        "version": "0.0.1",
+        "author": "juha.autioniemi@lapinamk.fi",
+        "desc": "Query electricity spot prices from ENTSO-E Transparency Platform.",
+        "license": "MIT"
+    },
+    "credentials": {
+        "API key": "",
+        "securityToken": ""
+    },
+    "color": "#3FADB5",
+    "outputLabels": [
+        "Spot prices"
+    ],
+    "icon": "font-awesome/fa-dollar",
+    "status": {
+        "x": 980,
+        "y": 300,
+        "wires": [
+            {
+                "id": "e613074587bff9ef",
+                "port": 0
+            }
+        ]
+    },
+    "flow": [
+        {
+            "id": "9107296ba421133e",
+            "type": "http request",
+            "z": "dbcfc232eebbdb2d",
+            "name": "req",
+            "method": "use",
+            "ret": "txt",
+            "paytoqs": "query",
+            "url": "",
+            "tls": "",
+            "persist": false,
+            "proxy": "",
+            "insecureHTTPParser": false,
+            "authType": "",
+            "senderr": false,
+            "headers": [],
+            "x": 470,
+            "y": 180,
+            "wires": [
+                [
+                    "64c05bd6b0ec4050"
+                ]
+            ]
+        },
+        {
+            "id": "c88a5a760cfee8cf",
+            "type": "function",
+            "z": "dbcfc232eebbdb2d",
+            "name": "Format request",
+            "func": "let keys = { \n    \"securityToken\": \"\", \n    \"documentType\": \"\", \n    \"in_Domain\": \"\", \n    \"out_Domain\": \"\", \n    \"periodStart\": \"\", \n    \"periodEnd\": \"\"\n}\n\nfor(let key in keys){\n    \n    let current_key = key\n    try{\n        if (current_key in msg.payload) {\n            keys[current_key] = msg.payload[current_key]\n        }\n        else {\n            keys[current_key] = env.get(current_key)\n        }\n    }\n    catch(e){\n        keys[current_key] = env.get(current_key)    \n    }\n    \n}\n\nlet params = {\n    \"securityToken\": keys[\"securityToken\"],\n    \"documentType\": keys[\"documentType\"],\n    \"in_Domain\": keys[\"in_Domain\"],\n    \"out_Domain\": keys[\"out_Domain\"],\n    \"periodStart\": keys[\"periodStart\"],\n    \"periodEnd\": keys[\"periodEnd\"],\n}\nmsg.payload = params;\nmsg.url = \"https://web-api.tp.entsoe.eu/api\";\nmsg.method = \"GET\";\nreturn msg;",
+            "outputs": 1,
+            "noerr": 0,
+            "initialize": "",
+            "finalize": "",
+            "libs": [],
+            "x": 300,
+            "y": 180,
+            "wires": [
+                [
+                    "9107296ba421133e"
+                ]
+            ]
+        },
+        {
+            "id": "270a407e38309ed6",
+            "type": "xml",
+            "z": "dbcfc232eebbdb2d",
+            "name": "",
+            "property": "payload",
+            "attr": "",
+            "chr": "",
+            "x": 730,
+            "y": 120,
+            "wires": [
+                [
+                    "9c0d57d9d60e4ece"
+                ]
+            ]
+        },
+        {
+            "id": "9c0d57d9d60e4ece",
+            "type": "function",
+            "z": "dbcfc232eebbdb2d",
+            "name": "Parse data",
+            "func": "function addHoursToDate(date, hours) {\n    date = new Date(new Date(date).setHours(date.getHours() + hours));\n    return date.toISOString();\n}\n\nlet data = msg.payload.Publication_MarketDocument.TimeSeries\nlet time_series_start_time = msg.payload.Publication_MarketDocument.TimeSeries[0].Period[0].timeInterval[0].start\nlet timeSeriesData = msg.payload.Publication_MarketDocument.TimeSeries\n\nlet dataPoints = []\nlet periodPoints;\nlet dataPoint = {}\nlet date = new Date(time_series_start_time)\nlet hours=0\n\nfor (var i = 0; i < timeSeriesData.length;i++){\n    \n    periodPoints = timeSeriesData[i].Period[0].Point\n\n    for (var j = 0; j < periodPoints.length;j++){\n        dataPoint = {\n            \"ts\": addHoursToDate(date,hours),\n            \"price\": Math.round((parseFloat(periodPoints[j][\"price.amount\"][0]/1000)*100)*100)/100\n        }\n        hours = hours + 1;        \n        dataPoints.push(dataPoint)\n    }\n}    \n\n//msg.time_series_start_time = time_series_start_time\nmsg.payload = dataPoints\nreturn msg;",
+            "outputs": 1,
+            "noerr": 0,
+            "initialize": "",
+            "finalize": "",
+            "libs": [],
+            "x": 870,
+            "y": 120,
+            "wires": [
+                []
+            ]
+        },
+        {
+            "id": "e613074587bff9ef",
+            "type": "status",
+            "z": "dbcfc232eebbdb2d",
+            "name": "",
+            "scope": null,
+            "x": 580,
+            "y": 300,
+            "wires": [
+                []
+            ]
+        },
+        {
+            "id": "64c05bd6b0ec4050",
+            "type": "switch",
+            "z": "dbcfc232eebbdb2d",
+            "name": "",
+            "property": "statusCode",
+            "propertyType": "msg",
+            "rules": [
+                {
+                    "t": "eq",
+                    "v": "200",
+                    "vt": "num"
+                },
+                {
+                    "t": "else"
+                }
+            ],
+            "checkall": "true",
+            "repair": false,
+            "outputs": 2,
+            "x": 590,
+            "y": 180,
+            "wires": [
+                [
+                    "270a407e38309ed6"
+                ],
+                []
+            ]
+        },
+        {
+            "id": "5b23d103ea701912",
+            "type": "subflow:dbcfc232eebbdb2d",
+            "z": "d93ef8d5.38b928",
+            "name": "",
+            "env": [
+                {
+                    "name": "securityToken",
+                    "type": "cred"
+                },
+                {
+                    "name": "API key",
+                    "type": "cred"
+                }
+            ],
+            "credentials": {
+                "securityToken": "__PWRD__",
+                "API key": "__PWRD__"
+            },
+            "x": 380,
+            "y": 300,
+            "wires": [
+                [
+                    "30718e330b633a81"
+                ]
+            ]
+        }
+    ]
+}

@@ -7,7 +7,7 @@ Query electricity spot prices from ENTSO-E Transparency Platform.
 
 Run the following command in your Node-RED user directory - typically `~/.node-red`
 
-        npm install tequ-node-red-entso-e
+        npm Lapland-UAS-Tequ/install tequ-node-red-entso-e
 
 ## Information
 
